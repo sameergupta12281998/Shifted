@@ -1,0 +1,54 @@
+server:
+  port: 8082
+  shutdown: graceful
+spring:
+  config:
+    import: optional:configtree:${APP_SECRET_PATH:/run/secrets/}
+  application:
+    name: booking-service
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  datasource:
+    url: ${BOOKING_DB_URL:jdbc:postgresql://localhost:5434/booking_db}
+    username: ${BOOKING_DB_USER:logistics}
+    password: ${booking_db_password:${BOOKING_DB_PASSWORD:logistics}}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+app:
+  assignment:
+    max-candidates: ${ASSIGNMENT_MAX_CANDIDATES:10}
+    offer-ttl-seconds: ${ASSIGNMENT_OFFER_TTL_SECONDS:20}
+    initial-backoff-seconds: ${ASSIGNMENT_INITIAL_BACKOFF_SECONDS:5}
+    max-backoff-seconds: ${ASSIGNMENT_MAX_BACKOFF_SECONDS:60}
+    scheduler-delay-ms: ${ASSIGNMENT_SCHEDULER_DELAY_MS:5000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
