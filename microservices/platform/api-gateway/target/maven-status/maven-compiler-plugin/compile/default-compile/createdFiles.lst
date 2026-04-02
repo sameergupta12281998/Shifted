@@ -1,0 +1,3 @@
+com/porterlike/platform/gateway/config/SecurityConfig.class
+com/porterlike/platform/gateway/security/JwtAuthenticationFilter.class
+com/porterlike/platform/gateway/ApiGatewayApplication.class

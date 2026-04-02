@@ -1,0 +1,59 @@
+server:
+  port: 8080
+  shutdown: graceful
+spring:
+  config:
+    import: optional:configtree:${APP_SECRET_PATH:/run/secrets/}
+  application:
+    name: api-gateway
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+        - id: booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/booking/**
+        - id: driver-service
+          uri: lb://driver-service
+          predicates:
+            - Path=/driver/**
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/admin/**
+        - id: tracking-service
+          uri: lb://tracking-service
+          predicates:
+            - Path=/tracking/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+security:
+  jwt:
+    secret: ${jwt_secret:${JWT_SECRET}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
