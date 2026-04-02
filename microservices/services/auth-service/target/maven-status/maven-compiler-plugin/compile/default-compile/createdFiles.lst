@@ -1,0 +1,12 @@
+com/porterlike/services/auth/service/AuthService.class
+com/porterlike/services/auth/model/Role.class
+com/porterlike/services/auth/model/UserAccount.class
+com/porterlike/services/auth/security/JwtService.class
+com/porterlike/services/auth/dto/RegisterRequest.class
+com/porterlike/services/auth/api/AuthController.class
+com/porterlike/services/auth/config/SecurityConfig.class
+com/porterlike/services/auth/dto/AuthResponse.class
+com/porterlike/services/auth/AuthServiceApplication.class
+com/porterlike/services/auth/dto/LoginRequest.class
+com/porterlike/services/auth/repository/UserAccountRepository.class
+com/porterlike/services/auth/api/GlobalExceptionHandler.class
