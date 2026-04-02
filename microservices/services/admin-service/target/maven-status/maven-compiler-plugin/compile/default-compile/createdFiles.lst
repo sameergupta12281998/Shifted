@@ -1,1 +1,6 @@
 com/porterlike/services/admin/AdminServiceApplication.class
+com/porterlike/services/admin/api/AdminController.class
+com/porterlike/services/admin/security/AuthenticatedPrincipal.class
+com/porterlike/services/admin/dto/ServiceStatusResponse.class
+com/porterlike/services/admin/config/RestClientConfig.class
+com/porterlike/services/admin/api/GlobalExceptionHandler.class

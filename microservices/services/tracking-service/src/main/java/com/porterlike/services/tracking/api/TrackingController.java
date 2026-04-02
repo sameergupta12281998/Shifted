@@ -32,6 +32,6 @@ public class TrackingController {
     @GetMapping("/driver/{driverId}")
     public TrackingSnapshot getDriverLocation(@PathVariable("driverId") String driverId) {
         return trackingService.getByDriver(driverId)
-                .orElseThrow(() -> new IllegalArgumentException("No location found for driver"));
+                .orElseThrow(() -> new NoLocationFoundException("No location found for driver: " + driverId));
     }
 }

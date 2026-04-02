@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.porterlike.services.auth.api.AuthControllerTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.863 s -- in com.porterlike.services.auth.api.AuthControllerTest

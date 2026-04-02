@@ -38,7 +38,7 @@ eureka:
 
 security:
   jwt:
-    secret: ${jwt_secret:${JWT_SECRET}}
+    secret: ${JWT_SECRET:${jwt_secret:local-dev-jwt-secret-change-me-32bytes-minimum}}
 
 management:
   endpoints:
