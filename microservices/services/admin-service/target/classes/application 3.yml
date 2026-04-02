@@ -1,0 +1,30 @@
+server:
+  port: 8084
+  shutdown: graceful
+spring:
+  application:
+    name: admin-service
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
