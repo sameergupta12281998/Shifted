@@ -1,2 +1,3 @@
 com/porterlike/services/booking/api/BookingControllerTest.class
 com/porterlike/services/booking/service/BookingAssignmentIntegrationTest.class
+com/porterlike/services/booking/security/AuthenticatedPrincipalTest.class

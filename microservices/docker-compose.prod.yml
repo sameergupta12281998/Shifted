@@ -1,0 +1,26 @@
+# Production overlay — apply with:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Differences from base:
+#  - Removes exposed ports for all databases and Redis (never public)
+#  - Removes exposed port for discovery-service (internal only)
+#  - Only api-gateway (8080) is reachable from the host
+
+services:
+
+  postgres-auth:
+    ports: !reset []          # unexpose 5433
+
+  postgres-booking:
+    ports: !reset []          # unexpose 5434
+
+  postgres-driver:
+    ports: !reset []          # unexpose 5435
+
+  redis:
+    ports: !reset []          # unexpose 6379
+
+  discovery-service:
+    ports: !reset []          # unexpose 8761 — Eureka is internal only
+
+  # api-gateway keeps ports: ["8080:8080"] from base compose

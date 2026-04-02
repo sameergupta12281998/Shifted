@@ -88,7 +88,6 @@ services:
     environment:
       AUTH_DB_URL: jdbc:postgresql://postgres-auth:5432/auth_db
       AUTH_DB_USER: logistics
-      JWT_SECRET: replace-with-a-64-byte-jwt-secret
       APP_SECRET_PATH: /run/secrets/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
     depends_on:
@@ -207,7 +206,6 @@ services:
     container_name: api-gateway
     restart: unless-stopped
     environment:
-      JWT_SECRET: replace-with-a-64-byte-jwt-secret
       APP_SECRET_PATH: /run/secrets/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
     ports:
