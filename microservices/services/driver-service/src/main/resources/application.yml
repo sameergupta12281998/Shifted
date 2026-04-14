@@ -30,6 +30,7 @@ eureka:
 app:
   tracking:
     endpoint: http://tracking-service/tracking/location
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN:shifted-internal-token}
 
 management:
   endpoints:

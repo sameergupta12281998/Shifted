@@ -10,6 +10,7 @@
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/driver-service/src/main/java/com/porterlike/services/driver/model/Driver.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/driver-service/src/main/java/com/porterlike/services/driver/model/DriverOffer.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/driver-service/src/main/java/com/porterlike/services/driver/model/DriverOfferStatus.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/driver-service/src/main/java/com/porterlike/services/driver/model/VerificationStatus.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/driver-service/src/main/java/com/porterlike/services/driver/repository/DriverOfferRepository.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/driver-service/src/main/java/com/porterlike/services/driver/repository/DriverRepository.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/driver-service/src/main/java/com/porterlike/services/driver/security/AuthenticatedPrincipal.java

@@ -5,6 +5,7 @@ public record DriverResponse(
         String name,
         String vehicleType,
         String vehicleNumber,
+        String verificationStatus,
         boolean online,
         boolean available,
         String currentBookingId,

@@ -1,3 +1,4 @@
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/platform/api-gateway/src/main/java/com/porterlike/platform/gateway/ApiGatewayApplication.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/platform/api-gateway/src/main/java/com/porterlike/platform/gateway/config/SecurityConfig.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/platform/api-gateway/src/main/java/com/porterlike/platform/gateway/security/JwtAuthenticationFilter.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/platform/api-gateway/src/main/java/com/porterlike/platform/gateway/security/RateLimitingFilter.java

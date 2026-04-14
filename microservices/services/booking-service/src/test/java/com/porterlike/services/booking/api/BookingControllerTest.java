@@ -3,11 +3,13 @@ package com.porterlike.services.booking.api;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.porterlike.services.booking.dto.BookingResponse;
+import java.util.List;
 import com.porterlike.services.booking.service.BookingService;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -81,4 +83,24 @@ class BookingControllerTest {
                                 """))
                 .andExpect(status().isCreated());
     }
+
+                  @Test
+                  void myBookingsReturnsCurrentUsersBookings() throws Exception {
+                    given(bookingService.myBookings(any())).willReturn(List.of(new BookingResponse(
+                        UUID.randomUUID().toString(),
+                        UUID.randomUUID().toString(),
+                        null,
+                        "A",
+                        "B",
+                        "BIKE",
+                        "CREATED"
+                    )));
+
+                    mockMvc.perform(get("/booking/my")
+                            .header("X-Authenticated-User-Id", UUID.randomUUID())
+                            .header("X-Authenticated-Role", "USER"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$[0].pickup").value("A"))
+                        .andExpect(jsonPath("$[0].status").value("CREATED"));
+                  }
 }

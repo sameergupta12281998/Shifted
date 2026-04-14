@@ -8,6 +8,7 @@ import com.porterlike.services.driver.dto.TrackingUpdateRequest;
 import com.porterlike.services.driver.model.Driver;
 import com.porterlike.services.driver.model.DriverOffer;
 import com.porterlike.services.driver.model.DriverOfferStatus;
+import com.porterlike.services.driver.model.VerificationStatus;
 import com.porterlike.services.driver.repository.DriverOfferRepository;
 import com.porterlike.services.driver.repository.DriverRepository;
 import com.porterlike.services.driver.security.AuthenticatedPrincipal;
@@ -15,6 +16,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -26,17 +30,20 @@ public class DriverService {
     private final DriverOfferRepository driverOfferRepository;
     private final RestTemplate restTemplate;
     private final String trackingEndpoint;
+    private final String trackingInternalServiceToken;
 
     public DriverService(
             DriverRepository driverRepository,
             DriverOfferRepository driverOfferRepository,
             RestTemplate restTemplate,
-            @Value("${app.tracking.endpoint}") String trackingEndpoint
+            @Value("${app.tracking.endpoint}") String trackingEndpoint,
+            @Value("${app.tracking.internal-service-token}") String trackingInternalServiceToken
     ) {
         this.driverRepository = driverRepository;
         this.driverOfferRepository = driverOfferRepository;
         this.restTemplate = restTemplate;
         this.trackingEndpoint = trackingEndpoint;
+        this.trackingInternalServiceToken = trackingInternalServiceToken;
     }
 
     @Transactional
@@ -64,6 +71,9 @@ public class DriverService {
     @Transactional
     public DriverResponse setOnline(AuthenticatedPrincipal principal, UUID driverId, boolean online) {
         Driver driver = authorizeDriverAccess(principal, driverId, true);
+        if (online && driver.getVerificationStatus() != VerificationStatus.APPROVED) {
+            throw new SecurityException("Driver must be verified and approved before going online");
+        }
         driver.setOnline(online);
         if (!online) {
             driver.setAvailable(false);
@@ -82,14 +92,21 @@ public class DriverService {
         driver.setUpdatedAt(Instant.now());
         Driver saved = driverRepository.save(driver);
 
-        restTemplate.postForLocation(
-                trackingEndpoint,
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Internal-Service-Token", trackingInternalServiceToken);
+        restTemplate.exchange(
+            trackingEndpoint,
+            HttpMethod.POST,
+            new HttpEntity<>(
                 new TrackingUpdateRequest(
-                        saved.getId().toString(),
-                        saved.getCurrentBookingId() == null ? null : saved.getCurrentBookingId().toString(),
-                        saved.getLatitude(),
-                        saved.getLongitude()
-                )
+                    saved.getId().toString(),
+                    saved.getCurrentBookingId() == null ? null : saved.getCurrentBookingId().toString(),
+                    saved.getLatitude(),
+                    saved.getLongitude()
+                ),
+                headers
+            ),
+            Void.class
         );
 
         return toResponse(saved);
@@ -219,6 +236,32 @@ public class DriverService {
         return true;
     }
 
+    @Transactional
+    public DriverResponse approveVerification(AuthenticatedPrincipal principal, UUID driverId) {
+        if (!principal.isAdmin()) {
+            throw new SecurityException("Only admins can approve driver verification");
+        }
+        Driver driver = find(driverId);
+        driver.setVerificationStatus(VerificationStatus.APPROVED);
+        driver.setUpdatedAt(Instant.now());
+        return toResponse(driverRepository.save(driver));
+    }
+
+    @Transactional
+    public DriverResponse rejectVerification(AuthenticatedPrincipal principal, UUID driverId) {
+        if (!principal.isAdmin()) {
+            throw new SecurityException("Only admins can reject driver verification");
+        }
+        Driver driver = find(driverId);
+        driver.setVerificationStatus(VerificationStatus.REJECTED);
+        if (driver.isOnline()) {
+            driver.setOnline(false);
+            driver.setAvailable(false);
+        }
+        driver.setUpdatedAt(Instant.now());
+        return toResponse(driverRepository.save(driver));
+    }
+
     private Driver find(UUID id) {
         return driverRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Driver not found"));
     }
@@ -242,6 +285,7 @@ public class DriverService {
                 d.getName(),
                 d.getVehicleType(),
                 d.getVehicleNumber(),
+                d.getVerificationStatus().name(),
                 d.isOnline(),
                 d.isAvailable(),
                 d.getCurrentBookingId() == null ? null : d.getCurrentBookingId().toString(),

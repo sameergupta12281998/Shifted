@@ -1,0 +1,10 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "mvn -pl services/auth-service,services/booking-service": true,
+        "mvn -pl platform/api-gateway": true,
+        "mvn -pl services/driver-service": true,
+        "mvn -pl services/pricing-service": true,
+        "mvn -pl services/notification-service,services/pricing-service": true,
+        "mvn -pl services/payment-service": true
+    }
+}

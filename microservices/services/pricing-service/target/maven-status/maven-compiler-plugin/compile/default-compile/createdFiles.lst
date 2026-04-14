@@ -1,0 +1,6 @@
+com/porterlike/services/pricing/service/PricingService.class
+com/porterlike/services/pricing/dto/PricingEstimateResponse.class
+com/porterlike/services/pricing/api/PricingController.class
+com/porterlike/services/pricing/PricingServiceApplication.class
+com/porterlike/services/pricing/service/PricingService$RateCard.class
+com/porterlike/services/pricing/dto/PricingEstimateRequest.class

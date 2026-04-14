@@ -96,6 +96,16 @@ public class BookingService {
         return toResponse(booking);
     }
 
+    public List<BookingResponse> myBookings(AuthenticatedPrincipal principal) {
+        if (!principal.isUser() && !principal.isAdmin()) {
+            throw new IllegalArgumentException("Only users and admins can view bookings");
+        }
+
+        return bookingRepository.findByUserIdOrderByCreatedAtDesc(principal.userId()).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public BookingResponse cancel(AuthenticatedPrincipal principal, UUID bookingId) {
         Booking booking = transactionTemplate.execute(status -> {
             Booking lockedBooking = bookingRepository.findByIdForUpdate(bookingId)

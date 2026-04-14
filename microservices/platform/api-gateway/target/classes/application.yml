@@ -31,6 +31,18 @@ spring:
           uri: lb://tracking-service
           predicates:
             - Path=/tracking/**
+        - id: pricing-service
+          uri: lb://pricing-service
+          predicates:
+            - Path=/pricing/**
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notifications/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/payments/**
 eureka:
   client:
     service-url:
@@ -39,6 +51,9 @@ eureka:
 security:
   jwt:
     secret: ${JWT_SECRET:${jwt_secret:local-dev-jwt-secret-change-me-32bytes-minimum}}
+  rate-limit:
+    general-per-minute: ${RATE_LIMIT_GENERAL_PER_MINUTE:120}
+    auth-per-minute: ${RATE_LIMIT_AUTH_PER_MINUTE:20}
 
 management:
   endpoints:

@@ -34,6 +34,7 @@ class DriverControllerTest {
                 "Raj",
                 "BIKE",
                 "KA01AB1234",
+                "UNVERIFIED",
                 false,
                 true,
                 null,

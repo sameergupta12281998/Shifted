@@ -5,6 +5,7 @@
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/auth-service/src/main/java/com/porterlike/services/auth/dto/AuthResponse.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/auth-service/src/main/java/com/porterlike/services/auth/dto/LoginRequest.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/auth-service/src/main/java/com/porterlike/services/auth/dto/RegisterRequest.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/auth-service/src/main/java/com/porterlike/services/auth/dto/UserProfileResponse.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/auth-service/src/main/java/com/porterlike/services/auth/model/Role.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/auth-service/src/main/java/com/porterlike/services/auth/model/UserAccount.java
 /Users/sameergupta/Documents/GitHub/Shifted/microservices/services/auth-service/src/main/java/com/porterlike/services/auth/repository/UserAccountRepository.java

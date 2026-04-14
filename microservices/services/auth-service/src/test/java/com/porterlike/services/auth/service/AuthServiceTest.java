@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import com.porterlike.services.auth.dto.AuthResponse;
 import com.porterlike.services.auth.dto.LoginRequest;
 import com.porterlike.services.auth.dto.RegisterRequest;
+import com.porterlike.services.auth.dto.UserProfileResponse;
 import com.porterlike.services.auth.model.Role;
 import com.porterlike.services.auth.model.UserAccount;
 import com.porterlike.services.auth.repository.UserAccountRepository;
@@ -152,5 +153,17 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Invalid credentials");
+    }
+
+    @Test
+    void meReturnsCurrentUserProfile() {
+        given(userAccountRepository.findById(userId)).willReturn(Optional.of(savedUser));
+
+        UserProfileResponse response = authService.me(userId);
+
+        assertThat(response.userId()).isEqualTo(userId.toString());
+        assertThat(response.name()).isEqualTo("Alice");
+        assertThat(response.phone()).isEqualTo("9876543210");
+        assertThat(response.role()).isEqualTo("USER");
     }
 }

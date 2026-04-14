@@ -12,6 +12,7 @@ import com.porterlike.services.driver.dto.DriverLocationRequest;
 import com.porterlike.services.driver.dto.DriverResponse;
 import com.porterlike.services.driver.dto.RegisterDriverRequest;
 import com.porterlike.services.driver.model.Driver;
+import com.porterlike.services.driver.model.VerificationStatus;
 import com.porterlike.services.driver.repository.DriverOfferRepository;
 import com.porterlike.services.driver.repository.DriverRepository;
 import com.porterlike.services.driver.security.AuthenticatedPrincipal;
@@ -25,6 +26,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -126,6 +129,7 @@ class DriverServiceTest {
     void setOnlineTrueMarksDriverOnlineAndAvailable() {
         driver.setOnline(false);
         driver.setAvailable(false);
+        driver.setVerificationStatus(VerificationStatus.APPROVED);
         AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(accountId.toString(), "DRIVER");
 
         given(driverRepository.findByIdForUpdate(driverId)).willReturn(Optional.of(driver));
@@ -141,6 +145,7 @@ class DriverServiceTest {
     void setOnlineFalseMarksDriverOfflineAndUnavailable() {
         driver.setOnline(true);
         driver.setAvailable(true);
+        driver.setVerificationStatus(VerificationStatus.APPROVED);
         AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(accountId.toString(), "DRIVER");
 
         given(driverRepository.findByIdForUpdate(driverId)).willReturn(Optional.of(driver));
@@ -153,14 +158,100 @@ class DriverServiceTest {
     }
 
     @Test
-    void setOnlineThrowsSecurityExceptionWhenAccountMismatch() {
-        UUID otherId = UUID.randomUUID();
-        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(otherId.toString(), "DRIVER");
+    void setOnlineThrowsSecurityExceptionWhenNotVerified() {
+        driver.setVerificationStatus(VerificationStatus.UNVERIFIED);
+        driver.setOnline(false);
+        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(accountId.toString(), "DRIVER");
 
         given(driverRepository.findByIdForUpdate(driverId)).willReturn(Optional.of(driver));
 
         assertThatThrownBy(() -> driverService.setOnline(principal, driverId, true))
-                .isInstanceOf(SecurityException.class);
+                .isInstanceOf(SecurityException.class)
+                .hasMessageContaining("must be verified");
+    }
+
+    @Test
+    void setOnlineThrowsSecurityExceptionWhenPending() {
+        driver.setVerificationStatus(VerificationStatus.PENDING);
+        driver.setOnline(false);
+        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(accountId.toString(), "DRIVER");
+
+        given(driverRepository.findByIdForUpdate(driverId)).willReturn(Optional.of(driver));
+
+        assertThatThrownBy(() -> driverService.setOnline(principal, driverId, true))
+                .isInstanceOf(SecurityException.class)
+                .hasMessageContaining("must be verified");
+    }
+
+    @Test
+    void setOnlineSucceedsWhenApproved() {
+        driver.setVerificationStatus(VerificationStatus.APPROVED);
+        driver.setOnline(false);
+        driver.setAvailable(false);
+        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(accountId.toString(), "DRIVER");
+
+        given(driverRepository.findByIdForUpdate(driverId)).willReturn(Optional.of(driver));
+        given(driverRepository.save(driver)).willReturn(driver);
+
+        DriverResponse response = driverService.setOnline(principal, driverId, true);
+
+        assertThat(response.online()).isTrue();
+        assertThat(response.verificationStatus()).isEqualTo("APPROVED");
+    }
+
+    // --- verification ---
+
+    @Test
+    void approveVerificationSetStatusToApproved() {
+        driver.setVerificationStatus(VerificationStatus.PENDING);
+        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(UUID.randomUUID().toString(), "ADMIN");
+
+        given(driverRepository.findById(driverId)).willReturn(Optional.of(driver));
+        given(driverRepository.save(any())).willAnswer(invocation -> {
+            Driver d = invocation.getArgument(0);
+            return d;
+        });
+
+        DriverResponse response = driverService.approveVerification(principal, driverId);
+
+        assertThat(response.verificationStatus()).isEqualTo("APPROVED");
+    }
+
+    @Test
+    void approveVerificationThrowsSecurityExceptionForNonAdmin() {
+        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(accountId.toString(), "DRIVER");
+
+        assertThatThrownBy(() -> driverService.approveVerification(principal, driverId))
+                .isInstanceOf(SecurityException.class)
+                .hasMessageContaining("Only admins");
+    }
+
+    @Test
+    void rejectVerificationSetStatusToRejected() {
+        driver.setVerificationStatus(VerificationStatus.PENDING);
+        driver.setOnline(true);
+        driver.setAvailable(true);
+        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(UUID.randomUUID().toString(), "ADMIN");
+
+        given(driverRepository.findById(driverId)).willReturn(Optional.of(driver));
+        given(driverRepository.save(any())).willAnswer(invocation -> {
+            Driver d = invocation.getArgument(0);
+            return d;
+        });
+
+        DriverResponse response = driverService.rejectVerification(principal, driverId);
+
+        assertThat(response.verificationStatus()).isEqualTo("REJECTED");
+        assertThat(response.online()).isFalse();
+    }
+
+    @Test
+    void rejectVerificationThrowsSecurityExceptionForNonAdmin() {
+        AuthenticatedPrincipal principal = AuthenticatedPrincipal.of(accountId.toString(), "DRIVER");
+
+        assertThatThrownBy(() -> driverService.rejectVerification(principal, driverId))
+                .isInstanceOf(SecurityException.class)
+                .hasMessageContaining("Only admins");
     }
 
     // --- nearby ---
@@ -302,7 +393,12 @@ class DriverServiceTest {
 
         assertThat(response.latitude()).isEqualTo(12.97);
         assertThat(response.longitude()).isEqualTo(77.59);
-        verify(restTemplate).postForLocation(eq("http://tracking-service/tracking/location"), any());
+        verify(restTemplate).exchange(
+            eq("http://tracking-service/tracking/location"),
+            eq(HttpMethod.POST),
+            any(HttpEntity.class),
+            eq(Void.class)
+        );
     }
 
     // --- helpers ---

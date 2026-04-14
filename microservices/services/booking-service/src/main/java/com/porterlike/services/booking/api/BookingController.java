@@ -5,6 +5,7 @@ import com.porterlike.services.booking.dto.CreateBookingRequest;
 import com.porterlike.services.booking.security.AuthenticatedPrincipal;
 import com.porterlike.services.booking.service.BookingService;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,14 @@ public class BookingController {
             @PathVariable("id") UUID id
     ) {
         return bookingService.get(AuthenticatedPrincipal.of(principalId, principalRole), id);
+    }
+
+    @GetMapping("/my")
+    public List<BookingResponse> myBookings(
+            @RequestHeader("X-Authenticated-User-Id") String principalId,
+            @RequestHeader("X-Authenticated-Role") String principalRole
+    ) {
+        return bookingService.myBookings(AuthenticatedPrincipal.of(principalId, principalRole));
     }
 
     @PostMapping("/cancel/{id}")

@@ -128,4 +128,22 @@ public class DriverController {
     ) {
         return driverService.complete(AuthenticatedPrincipal.of(principalId, principalRole), id, bookingId);
     }
+
+    @PostMapping("/{id}/verify/approve")
+    public DriverResponse approveVerification(
+            @RequestHeader("X-Authenticated-User-Id") String principalId,
+            @RequestHeader("X-Authenticated-Role") String principalRole,
+            @PathVariable("id") UUID id
+    ) {
+        return driverService.approveVerification(AuthenticatedPrincipal.of(principalId, principalRole), id);
+    }
+
+    @PostMapping("/{id}/verify/reject")
+    public DriverResponse rejectVerification(
+            @RequestHeader("X-Authenticated-User-Id") String principalId,
+            @RequestHeader("X-Authenticated-Role") String principalRole,
+            @PathVariable("id") UUID id
+    ) {
+        return driverService.rejectVerification(AuthenticatedPrincipal.of(principalId, principalRole), id);
+    }
 }

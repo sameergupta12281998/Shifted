@@ -16,6 +16,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 app:
+  security:
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN:shifted-internal-token}
   websocket:
     endpoint: /ws
     topic-prefix: /topic/tracking

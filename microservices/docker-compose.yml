@@ -182,6 +182,23 @@ services:
       timeout: 5s
       retries: 20
 
+  pricing-service:
+    build:
+      context: .
+      dockerfile: services/pricing-service/Dockerfile
+    container_name: pricing-service
+    restart: unless-stopped
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8086/actuator/health/readiness || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+
   admin-service:
     build:
       context: .
@@ -198,7 +215,38 @@ services:
       interval: 15s
       timeout: 5s
       retries: 20
-
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    container_name: notification-service
+    restart: unless-stopped
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8087/actuator/health/readiness || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+  payment-service:
+    build:
+      context: .
+      dockerfile: services/payment-service/Dockerfile
+    container_name: payment-service
+    restart: unless-stopped
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8088/actuator/health/readiness || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
   api-gateway:
     build:
       context: .
@@ -222,6 +270,12 @@ services:
       tracking-service:
         condition: service_healthy
       admin-service:
+        condition: service_healthy
+      pricing-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      payment-service:
         condition: service_healthy
     secrets:
       - jwt_secret

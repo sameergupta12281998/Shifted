@@ -24,6 +24,9 @@
         <module>services/driver-service</module>
         <module>services/admin-service</module>
         <module>services/tracking-service</module>
+        <module>services/pricing-service</module>
+        <module>services/notification-service</module>
+        <module>services/payment-service</module>
     </modules>
 
     <properties>

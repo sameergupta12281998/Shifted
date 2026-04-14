@@ -1,5 +1,6 @@
 com/porterlike/services/driver/model/DriverOfferStatus.class
 com/porterlike/services/driver/api/GlobalExceptionHandler.class
+com/porterlike/services/driver/model/VerificationStatus.class
 com/porterlike/services/driver/config/RestClientConfig.class
 com/porterlike/services/driver/DriverServiceApplication.class
 com/porterlike/services/driver/repository/DriverOfferRepository.class
