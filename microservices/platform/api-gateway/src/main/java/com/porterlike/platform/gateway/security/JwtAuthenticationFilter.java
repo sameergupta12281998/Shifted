@@ -31,8 +31,10 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     public static final String AUTHENTICATED_USER_ID_HEADER = "X-Authenticated-User-Id";
     public static final String AUTHENTICATED_ROLE_HEADER = "X-Authenticated-Role";
 
-    private final SecretKey secretKey;
-    private final Predicate<String> isPublicPath = path -> path.startsWith("/auth/") || path.startsWith("/actuator/");
+        private final SecretKey secretKey;
+        private final Predicate<String> isPublicPath = path -> path.startsWith("/actuator/")
+            || path.equals("/auth/login")
+            || path.equals("/auth/register");
 
     public JwtAuthenticationFilter(@Value("${security.jwt.secret}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));

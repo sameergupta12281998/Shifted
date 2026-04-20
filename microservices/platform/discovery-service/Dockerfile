@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY platform/discovery-service/pom.xml platform/discovery-service/pom.xml
-RUN --mount=type=cache,target=/root/.m2 mvn -q -f platform/discovery-service/pom.xml dependency:go-offline
+RUN mvn -q -f platform/discovery-service/pom.xml dependency:go-offline
 
 COPY platform/discovery-service/src platform/discovery-service/src
-RUN --mount=type=cache,target=/root/.m2 mvn -q -f platform/discovery-service/pom.xml package -DskipTests
+RUN mvn -q -f platform/discovery-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

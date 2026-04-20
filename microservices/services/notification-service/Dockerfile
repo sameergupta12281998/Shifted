@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY services/notification-service/pom.xml services/notification-service/pom.xml
-RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/notification-service/pom.xml dependency:go-offline
+RUN mvn -q -f services/notification-service/pom.xml dependency:go-offline
 
 COPY services/notification-service/src services/notification-service/src
-RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/notification-service/pom.xml package -DskipTests
+RUN mvn -q -f services/notification-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
