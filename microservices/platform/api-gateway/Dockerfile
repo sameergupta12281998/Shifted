@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY platform/api-gateway/pom.xml platform/api-gateway/pom.xml
-RUN mvn -q -f platform/api-gateway/pom.xml dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f platform/api-gateway/pom.xml dependency:go-offline
 
 COPY platform/api-gateway/src platform/api-gateway/src
-RUN mvn -q -f platform/api-gateway/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f platform/api-gateway/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

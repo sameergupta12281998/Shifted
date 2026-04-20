@@ -5,11 +5,11 @@ import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -23,7 +23,8 @@ public class RateLimitingFilter implements GlobalFilter, Ordered {
     private final int generalLimitPerMinute;
     private final int authLimitPerMinute;
 
-    public RateLimitingFilter(
+        @Autowired
+        public RateLimitingFilter(
             @Value("${security.rate-limit.general-per-minute:120}") int generalLimitPerMinute,
             @Value("${security.rate-limit.auth-per-minute:20}") int authLimitPerMinute
     ) {

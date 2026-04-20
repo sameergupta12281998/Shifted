@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY services/fraud-detection-service/pom.xml services/fraud-detection-service/pom.xml
-RUN mvn -q -f services/fraud-detection-service/pom.xml dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/fraud-detection-service/pom.xml dependency:go-offline
 
 COPY services/fraud-detection-service/src services/fraud-detection-service/src
-RUN mvn -q -f services/fraud-detection-service/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/fraud-detection-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

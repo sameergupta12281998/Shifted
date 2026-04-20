@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY services/rating-service/pom.xml services/rating-service/pom.xml
-RUN mvn -q -f services/rating-service/pom.xml dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/rating-service/pom.xml dependency:go-offline
 
 COPY services/rating-service/src services/rating-service/src
-RUN mvn -q -f services/rating-service/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/rating-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

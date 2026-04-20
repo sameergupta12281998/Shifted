@@ -1,0 +1,7 @@
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/analytics-service/src/main/java/com/porterlike/services/analytics/AnalyticsServiceApplication.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/analytics-service/src/main/java/com/porterlike/services/analytics/api/AnalyticsController.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/analytics-service/src/main/java/com/porterlike/services/analytics/dto/AnalyticsSummary.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/analytics-service/src/main/java/com/porterlike/services/analytics/event/DomainEventConsumer.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/analytics-service/src/main/java/com/porterlike/services/analytics/model/DomainEvent.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/analytics-service/src/main/java/com/porterlike/services/analytics/repository/DomainEventRepository.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/analytics-service/src/main/java/com/porterlike/services/analytics/service/AnalyticsService.java

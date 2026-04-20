@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY services/tracking-service/pom.xml services/tracking-service/pom.xml
-RUN mvn -q -f services/tracking-service/pom.xml dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/tracking-service/pom.xml dependency:go-offline
 
 COPY services/tracking-service/src services/tracking-service/src
-RUN mvn -q -f services/tracking-service/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/tracking-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

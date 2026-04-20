@@ -6,7 +6,13 @@
         "mvn -pl services/pricing-service": true,
         "mvn -pl services/notification-service,services/pricing-service": true,
         "mvn -pl services/payment-service": true,
-        "docker compose": true
+        "docker compose": true,
+        "docker pull": true,
+        "mvn -DskipTests compile": true,
+        "/^for f in \\./platform/api-gateway/Dockerfile \\./platform/discovery-service/Dockerfile \\./services/driver-service/Dockerfile \\./services/rating-service/Dockerfile \\./services/tracking-service/Dockerfile \\./services/notification-service/Dockerfile \\./services/payment-service/Dockerfile \\./services/pricing-service/Dockerfile \\./services/analytics-service/Dockerfile \\./services/admin-service/Dockerfile \\./services/auth-service/Dockerfile \\./services/booking-service/Dockerfile \\./services/fraud-detection-service/Dockerfile \\./services/matching-service/Dockerfile; do perl -0pi -e 's/RUN mvn -q -f \\(\\\\S\\+\\) dependency:go-offline/RUN --mount=type=cache,target=\\\\/root\\\\/\\.m2 mvn -q -f \\$1 dependency:go-offline/g; s/RUN mvn -q -f \\(\\\\S\\+\\) package -DskipTests/RUN --mount=type=cache,target=\\\\/root\\\\/\\.m2 mvn -q -f \\$1 package -DskipTests/g' \"\\$f\"; done$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }

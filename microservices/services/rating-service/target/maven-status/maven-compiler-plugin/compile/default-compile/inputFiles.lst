@@ -1,0 +1,8 @@
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/RatingServiceApplication.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/api/RatingController.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/dto/RatingResponse.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/dto/RatingStats.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/dto/SubmitRatingRequest.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/model/Rating.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/repository/RatingRepository.java
+/Users/sameergupta/Documents/GitHub/Shifted/microservices/services/rating-service/src/main/java/com/porterlike/services/rating/service/RatingService.java

@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY services/analytics-service/pom.xml services/analytics-service/pom.xml
-RUN mvn -q -f services/analytics-service/pom.xml dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/analytics-service/pom.xml dependency:go-offline
 
 COPY services/analytics-service/src services/analytics-service/src
-RUN mvn -q -f services/analytics-service/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/analytics-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

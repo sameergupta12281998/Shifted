@@ -3,10 +3,10 @@ WORKDIR /workspace
 
 COPY pom.xml ./pom.xml
 COPY services/driver-service/pom.xml services/driver-service/pom.xml
-RUN mvn -q -f services/driver-service/pom.xml dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/driver-service/pom.xml dependency:go-offline
 
 COPY services/driver-service/src services/driver-service/src
-RUN mvn -q -f services/driver-service/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -q -f services/driver-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
