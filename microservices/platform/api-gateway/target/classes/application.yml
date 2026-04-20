@@ -43,6 +43,22 @@ spring:
           uri: lb://payment-service
           predicates:
             - Path=/payments/**
+        - id: matching-service
+          uri: lb://matching-service
+          predicates:
+            - Path=/matching/**
+        - id: rating-service
+          uri: lb://rating-service
+          predicates:
+            - Path=/ratings/**
+        - id: analytics-service
+          uri: lb://analytics-service
+          predicates:
+            - Path=/analytics/**
+        - id: fraud-detection-service
+          uri: lb://fraud-detection-service
+          predicates:
+            - Path=/fraud/**
 eureka:
   client:
     service-url:

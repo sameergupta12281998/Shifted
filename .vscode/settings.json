@@ -5,6 +5,8 @@
         "mvn -pl services/driver-service": true,
         "mvn -pl services/pricing-service": true,
         "mvn -pl services/notification-service,services/pricing-service": true,
-        "mvn -pl services/payment-service": true
-    }
+        "mvn -pl services/payment-service": true,
+        "docker compose": true
+    },
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

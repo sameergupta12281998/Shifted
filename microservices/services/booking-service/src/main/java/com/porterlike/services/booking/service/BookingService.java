@@ -8,6 +8,7 @@ import com.porterlike.services.booking.model.Booking;
 import com.porterlike.services.booking.model.BookingDriverOffer;
 import com.porterlike.services.booking.model.BookingStatus;
 import com.porterlike.services.booking.model.DriverOfferStatus;
+import com.porterlike.services.booking.event.KafkaEventPublisher;
 import com.porterlike.services.booking.repository.BookingDriverOfferRepository;
 import com.porterlike.services.booking.repository.BookingRepository;
 import com.porterlike.services.booking.security.AuthenticatedPrincipal;
@@ -31,16 +32,18 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final BookingDriverOfferRepository offerRepository;
     private final RestTemplate restTemplate;
+    private final KafkaEventPublisher eventPublisher;
     private final int maxCandidates;
     private final int offerTtlSeconds;
     private final int initialBackoffSeconds;
     private final int maxBackoffSeconds;
-        private final TransactionTemplate transactionTemplate;
+    private final TransactionTemplate transactionTemplate;
 
     public BookingService(
             BookingRepository bookingRepository,
             BookingDriverOfferRepository offerRepository,
             RestTemplate restTemplate,
+            KafkaEventPublisher eventPublisher,
             PlatformTransactionManager transactionManager,
             @Value("${app.assignment.max-candidates}") int maxCandidates,
             @Value("${app.assignment.offer-ttl-seconds}") int offerTtlSeconds,
@@ -50,6 +53,7 @@ public class BookingService {
         this.bookingRepository = bookingRepository;
         this.offerRepository = offerRepository;
         this.restTemplate = restTemplate;
+        this.eventPublisher = eventPublisher;
         this.maxCandidates = maxCandidates;
         this.offerTtlSeconds = offerTtlSeconds;
         this.initialBackoffSeconds = initialBackoffSeconds;
@@ -85,6 +89,13 @@ public class BookingService {
             return bookingRepository.save(created);
         });
 
+        eventPublisher.publishBookingCreated(
+                booking.getId().toString(),
+                booking.getUserId().toString(),
+                booking.getVehicleType(),
+                booking.getPickup(),
+                booking.getDropAddress()
+        );
         attemptAssignment(booking.getId());
         return toResponse(bookingRepository.findById(booking.getId()).orElseThrow());
     }
@@ -117,8 +128,10 @@ public class BookingService {
             lockedBooking.setStatus(BookingStatus.CANCELLED);
             lockedBooking.setUpdatedAt(Instant.now());
             return bookingRepository.save(lockedBooking);
-        });
-        return toResponse(booking);
+        });        eventPublisher.publishBookingCancelled(
+                booking.getId().toString(),
+                booking.getUserId().toString()
+        );        return toResponse(booking);
     }
 
     @Scheduled(fixedDelayString = "${app.assignment.scheduler-delay-ms:5000}")
@@ -160,6 +173,11 @@ public class BookingService {
                 booking.setStatus(BookingStatus.ASSIGNED);
                 booking.setUpdatedAt(now);
                 bookingRepository.save(booking);
+                eventPublisher.publishBookingAssigned(
+                        booking.getId().toString(),
+                        latestOffer.getDriverId().toString(),
+                        booking.getVehicleType()
+                );
                 return;
             }
 

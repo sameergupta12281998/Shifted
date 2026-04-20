@@ -27,6 +27,10 @@
         <module>services/pricing-service</module>
         <module>services/notification-service</module>
         <module>services/payment-service</module>
+        <module>services/matching-service</module>
+        <module>services/rating-service</module>
+        <module>services/analytics-service</module>
+        <module>services/fraud-detection-service</module>
     </modules>
 
     <properties>

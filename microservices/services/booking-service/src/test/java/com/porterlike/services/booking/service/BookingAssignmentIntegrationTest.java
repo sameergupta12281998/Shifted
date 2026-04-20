@@ -1,6 +1,7 @@
 package com.porterlike.services.booking.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import com.porterlike.services.booking.event.KafkaEventPublisher;
 import com.porterlike.services.booking.model.Booking;
 import com.porterlike.services.booking.model.BookingDriverOffer;
 import com.porterlike.services.booking.model.BookingStatus;
@@ -43,6 +45,8 @@ class BookingAssignmentIntegrationTest {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
+    private KafkaEventPublisher eventPublisher;
+
     private RestTemplate restTemplate;
     private MockRestServiceServer server;
     private BookingService bookingService;
@@ -51,10 +55,12 @@ class BookingAssignmentIntegrationTest {
     void setUp() {
         restTemplate = new RestTemplate();
         server = MockRestServiceServer.bindTo(restTemplate).build();
+        eventPublisher = mock(KafkaEventPublisher.class);
         bookingService = new BookingService(
                 bookingRepository,
                 offerRepository,
                 restTemplate,
+                eventPublisher,
                 transactionManager,
                 2,
                 20,
